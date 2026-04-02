@@ -47,17 +47,22 @@ public class App {
 	}
 
 	static void cadastrarParticipante() {
-		System.out.print("Nome: ");
-		var nome = in.nextLine();
+    System.out.print("Nome: ");
+    var nome = in.nextLine();
 
-		System.out.print("Email (opcional): ");
-		var email = in.nextLine();
+    System.out.print("Email (opcional): ");
+    var email = in.nextLine();
 
-		if (nome == null || nome.isBlank()) {
-			System.out.println("nome inválido");
-			return;
-		}
+    if (nome == null || nome.isBlank()) {
+        System.out.println("nome inválido");
+        return;
+    }
 
+    var service = new br.com.ucsal.olimpiadas.service.ParticipanteService(participantes);
+    var p = service.cadastrar(nome, email, proximoParticipanteId++);
+
+    System.out.println("Participante cadastrado: " + p.getId());
+}
 		var p = new Participante();
 		p.setId(proximoParticipanteId++);
 		p.setNome(nome);
