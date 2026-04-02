@@ -73,14 +73,19 @@ public class App {
 	}
 
 	static void cadastrarProva() {
-		System.out.print("Título da prova: ");
-		var titulo = in.nextLine();
+    System.out.print("Título da prova: ");
+    var titulo = in.nextLine();
 
-		if (titulo == null || titulo.isBlank()) {
-			System.out.println("título inválido");
-			return;
-		}
+    if (titulo == null || titulo.isBlank()) {
+        System.out.println("título inválido");
+        return;
+    }
 
+    var service = new br.com.ucsal.olimpiadas.service.ProvaService(provas);
+    var prova = service.cadastrar(titulo, proximaProvaId++);
+
+    System.out.println("Prova criada: " + prova.getId());
+}
 		var prova = new Prova();
 		prova.setId(proximaProvaId++);
 		prova.setTitulo(titulo);
