@@ -1,0 +1,37 @@
+package br.com.ucsal.olimpiadas.service;
+
+import java.util.List;
+import br.com.ucsal.olimpiadas.Tentativa;
+
+public class TentativaService {
+
+    private final List<Tentativa> tentativas;
+
+    public TentativaService(List<Tentativa> tentativas) {
+        this.tentativas = tentativas;
+    }
+
+    public Tentativa criar(long id, long participanteId, long provaId) {
+        var tentativa = new Tentativa();
+        tentativa.setId(id);
+        tentativa.setParticipanteId(participanteId);
+        tentativa.setProvaId(provaId);
+
+        tentativas.add(tentativa);
+        return tentativa;
+    }
+
+    public int calcularNota(Tentativa tentativa) {
+        int acertos = 0;
+        for (var r : tentativa.getRespostas()) {
+            if (r.isCorreta()) {
+                acertos++;
+            }
+        }
+        return acertos;
+    }
+
+    public List<Tentativa> listar() {
+        return tentativas;
+    }
+}
