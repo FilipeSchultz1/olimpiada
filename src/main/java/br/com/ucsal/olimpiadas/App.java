@@ -47,50 +47,35 @@ public class App {
 	}
 
 	static void cadastrarParticipante() {
-    System.out.print("Nome: ");
-    var nome = in.nextLine();
+		System.out.print("Nome: ");
+		var nome = in.nextLine();
 
-    System.out.print("Email (opcional): ");
-    var email = in.nextLine();
+		System.out.print("Email (opcional): ");
+		var email = in.nextLine();
 
-    if (nome == null || nome.isBlank()) {
-        System.out.println("nome inválido");
-        return;
-    }
+		if (nome == null || nome.isBlank()) {
+			System.out.println("nome inválido");
+			return;
+		}
 
-    var service = new br.com.ucsal.olimpiadas.service.ParticipanteService(participantes);
-    var p = service.cadastrar(nome, email, proximoParticipanteId++);
+		var service = new br.com.ucsal.olimpiadas.service.ParticipanteService(participantes);
+		var p = service.cadastrar(nome, email, proximoParticipanteId++);
 
-    System.out.println("Participante cadastrado: " + p.getId());
-}
-		var p = new Participante();
-		p.setId(proximoParticipanteId++);
-		p.setNome(nome);
-		p.setEmail(email);
-
-		participantes.add(p);
 		System.out.println("Participante cadastrado: " + p.getId());
 	}
 
 	static void cadastrarProva() {
-    System.out.print("Título da prova: ");
-    var titulo = in.nextLine();
+		System.out.print("Título da prova: ");
+		var titulo = in.nextLine();
 
-    if (titulo == null || titulo.isBlank()) {
-        System.out.println("título inválido");
-        return;
-    }
+		if (titulo == null || titulo.isBlank()) {
+			System.out.println("título inválido");
+			return;
+		}
 
-    var service = new br.com.ucsal.olimpiadas.service.ProvaService(provas);
-    var prova = service.cadastrar(titulo, proximaProvaId++);
+		var service = new br.com.ucsal.olimpiadas.service.ProvaService(provas);
+		var prova = service.cadastrar(titulo, proximaProvaId++);
 
-    System.out.println("Prova criada: " + prova.getId());
-}
-		var prova = new Prova();
-		prova.setId(proximaProvaId++);
-		prova.setTitulo(titulo);
-
-		provas.add(prova);
 		System.out.println("Prova criada: " + prova.getId());
 	}
 
@@ -124,13 +109,10 @@ public class App {
 		}
 
 		var service = new br.com.ucsal.olimpiadas.service.QuestaoService(questoes);
-var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQuestaoId++);
-
-		questoes.add(q);
+		var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQuestaoId++);
 
 		System.out.println("Questão cadastrada: " + q.getId() + " (na prova " + provaId + ")");
 	}
-
 
 	static void aplicarProva() {
 		if (participantes.isEmpty()) {
@@ -157,10 +139,8 @@ var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQues
 			return;
 		}
 
-		var tentativa = new Tentativa();
-		tentativa.setId(proximaTentativaId++);
-		tentativa.setParticipanteId(participanteId);
-		tentativa.setProvaId(provaId);
+		var serviceTentativa = new br.com.ucsal.olimpiadas.service.TentativaService(tentativas);
+		var tentativa = serviceTentativa.criar(proximaTentativaId++, participanteId, provaId);
 
 		System.out.println("\n--- Início da Prova ---");
 
@@ -172,7 +152,7 @@ var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQues
 			imprimirTabuleiroFen(q.getFenInicial());
 
 			for (var alt : q.getAlternativas()) {
-			    System.out.println(alt);
+				System.out.println(alt);
 			}
 
 			System.out.print("Sua resposta (A–E): ");
@@ -192,30 +172,24 @@ var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQues
 			tentativa.getRespostas().add(r);
 		}
 
-		tentativas.add(tentativa);
-
-		int nota = calcularNota(tentativa);
+		int nota = serviceTentativa.calcularNota(tentativa);
 		System.out.println("\n--- Fim da Prova ---");
 		System.out.println("Nota (acertos): " + nota + " / " + tentativa.getRespostas().size());
 	}
 
-	public static int calcularNota(Tentativa tentativa) {
-		int acertos = 0;
-		for (var r : tentativa.getRespostas()) {
-			if (r.isCorreta())
-				acertos++;
-		}
-		return acertos;
-	}
-
 	static void listarTentativas() {
 		System.out.println("\n--- Tentativas ---");
+		var service = new br.com.ucsal.olimpiadas.service.TentativaService(tentativas);
+
 		for (var t : tentativas) {
-			System.out.printf("#%d | participante=%d | prova=%d | nota=%d/%d%n", t.getId(), t.getParticipanteId(),
-					t.getProvaId(), calcularNota(t), t.getRespostas().size());
+			System.out.printf("#%d | participante=%d | prova=%d | nota=%d/%d%n",
+					t.getId(),
+					t.getParticipanteId(),
+					t.getProvaId(),
+					service.calcularNota(t),
+					t.getRespostas().size());
 		}
 	}
-
 
 	static Long escolherParticipante() {
 		System.out.println("\nParticipantes:");
@@ -292,7 +266,6 @@ var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQues
 		System.out.println("    a b c d e f g h");
 		System.out.println();
 	}
-
 
 	static void seed() {
 
