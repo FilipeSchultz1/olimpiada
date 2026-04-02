@@ -123,12 +123,8 @@ public class App {
 			return;
 		}
 
-		var q = new Questao();
-		q.setId(proximaQuestaoId++);
-		q.setProvaId(provaId);
-		q.setEnunciado(enunciado);
-		q.setAlternativas(alternativas);
-		q.setAlternativaCorreta(correta);
+		var service = new br.com.ucsal.olimpiadas.service.QuestaoService(questoes);
+var q = service.cadastrar(provaId, enunciado, alternativas, correta, proximaQuestaoId++);
 
 		questoes.add(q);
 
